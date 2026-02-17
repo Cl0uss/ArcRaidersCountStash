@@ -83,6 +83,7 @@ itemsInRow = 1
 xCurr = xStart
 yCurr = yStart
 yNext = deque([372, 426, 481, 536, 590, 645, 699, 754, 809, 863, 893])
+hop = False
 if not stopped:
     print("Starting...")
     p.keyDown('ctrl')
@@ -91,10 +92,19 @@ if not stopped:
             print("Stopped by user!")
             break
         if i % 24 == 1 and i != 1:
-            p.moveTo(xNext,yNext.popleft())
+            yNextManual = yNext.popleft()
+            if yNextManual == 893:
+                p.moveTo(xNext,809)
+                p.click()
+                hop = True
+                time.sleep(1.0)
+            p.moveTo(xNext,yNextManual)
             p.click()
             time.sleep(0.8)
-            xCurr, yCurr, itemsInRow = xStart, yStart, 
+            xCurr, yCurr, itemsInRow = xStart, yStart, 1
+            if hop:
+                yCurr += 300
+                hop = False
         if itemsInRow > 4:
             xCurr = xStart
             yCurr += 100
