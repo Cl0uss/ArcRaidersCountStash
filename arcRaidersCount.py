@@ -61,7 +61,7 @@ elif monitor == 'right':
     xStart, yStart, xNext = 2116, 315, 2504
 else:
     raise SystemExit("No monitor selected")
-
+print(f'Game on {monitor} monitor')
 itemsCount = ask_items()
 
 if itemsCount is None:
@@ -70,33 +70,37 @@ if itemsCount is None:
 print("Items in stash:", itemsCount)
 
 show_popup()
-
+stopped = False
 print("Waiting for S...")
-keyboard.wait('s')
+while not keyboard.is_pressed('s'):
+        if keyboard.is_pressed('x'):
+            stopped = True
+            print("Stopped by user!")
+            break
 
-print("Starting...")
 
 itemsInRow = 1
 xCurr = xStart
 yCurr = yStart
 yNext = deque([372, 426, 481, 536, 590, 645, 699, 754, 809, 863, 893])
-
-p.keyDown('ctrl')
-for i in range (1,itemsCount+1):
-    if keyboard.is_pressed('x'):
-        print("Stopped by user!")
-        break
-    if i % 24 == 1 and i != 1:
-        p.moveTo(xNext,yNext.popleft())
+if not stopped:
+    print("Starting...")
+    p.keyDown('ctrl')
+    for i in range (1,itemsCount+1):
+        if keyboard.is_pressed('x'):
+            print("Stopped by user!")
+            break
+        if i % 24 == 1 and i != 1:
+            p.moveTo(xNext,yNext.popleft())
+            p.click()
+            time.sleep(0.8)
+            xCurr, yCurr, itemsInRow = xStart, yStart, 
+        if itemsInRow > 4:
+            xCurr = xStart
+            yCurr += 100
+            itemsInRow = 1
+        p.moveTo(xCurr,yCurr) 
         p.click()
-        time.sleep(0.8)
-        xCurr, yCurr, itemsInRow = xStart, yStart, 1
-    if itemsInRow > 4:
-        xCurr = xStart
-        yCurr += 100
-        itemsInRow = 1
-    p.moveTo(xCurr,yCurr) 
-    p.click()
-    xCurr += 100
-    itemsInRow +=1
-p.keyUp('ctrl')
+        xCurr += 100
+        itemsInRow +=1
+    p.keyUp('ctrl')
